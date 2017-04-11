@@ -90,10 +90,19 @@ int main(int argc, char *argv[])
         }
     }
 
+#if defined(naive)
     clock_gettime(CLOCK_REALTIME, &start);
     naive_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
     clock_gettime(CLOCK_REALTIME, &end);
     printf("naive: \t\t %ld us\n", diff_in_us(start, end));
+#endif
+
+#if defined(sub_matrix)
+    clock_gettime(CLOCK_REALTIME, &start);
+    sub_matrix_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("sub_martrix: \t\t %ld us\n", diff_in_us(start, end));
+#endif
 
     free(src1);
     free(src2);
