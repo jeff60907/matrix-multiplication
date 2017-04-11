@@ -27,6 +27,7 @@ static long diff_in_us(struct timespec t1, struct timespec t2)
 
 int main(int argc, char *argv[])
 {
+    /*
     int martrix_1[16] = { 0,  1,  2,  3,
                           4,  5,  6,  7,
                           8,  9, 10, 11,
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
 
     assert(0 == memcmp(test_out, ans, 16 * sizeof(int)) &&
            "Verification fails");
-
+    */
     struct timespec start, end;
     int *src1 = (int *) malloc(sizeof(int) * MARTRIX1_W * MARTRIX1_H);
     int *src2 = (int *) malloc(sizeof(int) * MARTRIX2_W * MARTRIX2_H);
@@ -101,7 +102,7 @@ int main(int argc, char *argv[])
     clock_gettime(CLOCK_REALTIME, &start);
     sub_matrix_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
     clock_gettime(CLOCK_REALTIME, &end);
-    printf("sub_martrix: \t\t %ld us\n", diff_in_us(start, end));
+    printf("sub_matrix: \t\t %ld us\n", diff_in_us(start, end));
 #endif
 
     free(src1);

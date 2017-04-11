@@ -14,7 +14,13 @@ naive: $(SRCS_common)
 	$(CC) $(CFLAGS) -D$@ -o $@ main.c
 sub_matrix: $(SRCS_common)
 	$(CC) $(CFLAGS) -D$@ -o $@ main.c
-
+cache-test: $(EXEC)
+	echo 1 | sudo tee /proc/sys/vm/drop_caches && \
+		perf stat --repeat 2 -e cache-misses,cache-references,instructions,cycles \
+		./naive
+	echo 2 | sudo tee /proc/sys/vm/drop_caches && \
+		perf stat --repeat 2 -e cache-misses,cache-references,instructions,cycles \
+		./sub_matrix
 clean:
 	$(RM) $(EXEC)
 
