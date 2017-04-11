@@ -2,8 +2,28 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <time.h>
+
 #include "impl.c"
 
+#define MARTRIX1_H 1024
+#define MARTRIX1_W 1024
+#define MARTRIX2_H 1024
+#define MARTRIX2_W 1024
+
+
+static long diff_in_us(struct timespec t1, struct timespec t2)
+{
+    struct timespec diff;
+    if (t2.tv_nsec-t1.tv_nsec < 0) {
+        diff.tv_sec  = t2.tv_sec - t1.tv_sec - 1;
+        diff.tv_nsec = t2.tv_nsec - t1.tv_nsec + 1000000000;
+    } else {
+        diff.tv_sec  = t2.tv_sec - t1.tv_sec;
+        diff.tv_nsec = t2.tv_nsec - t1.tv_nsec;
+    }
+    return (diff.tv_sec * 1000000.0 + diff.tv_nsec / 1000.0);
+}
 
 int main(int argc, char *argv[])
 {
@@ -52,6 +72,32 @@ int main(int argc, char *argv[])
 
     assert(0 == memcmp(test_out, ans, 16 * sizeof(int)) &&
            "Verification fails");
+
+    struct timespec start, end;
+    int *src1 = (int *) malloc(sizeof(int) * MARTRIX1_W * MARTRIX1_H);
+    int *src2 = (int *) malloc(sizeof(int) * MARTRIX2_W * MARTRIX2_H);
+    int *out1 = (int *) malloc(sizeof(int) * MARTRIX1_W * MARTRIX2_H);
+
+    srand(time(NULL));
+    for (int i = 0; i < MARTRIX1_H; i++) {
+        for (int j = 0; j < MARTRIX1_W; j++) {
+            src1[i * MARTRIX1_W + j] = rand();
+        }
+    }
+    for (int i = 0; i < MARTRIX2_H; i++) {
+        for (int j = 0; j < MARTRIX2_W; j++) {
+            src2[i * MARTRIX2_W + j] = rand();
+        }
+    }
+
+    clock_gettime(CLOCK_REALTIME, &start);
+    naive_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("naive: \t\t %ld us\n", diff_in_us(start, end));
+
+    free(src1);
+    free(src2);
+    free(out1);
 
     return 0;
 
