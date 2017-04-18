@@ -1,5 +1,5 @@
 CFLAGS = -Wall -std=gnu99 -O0 -msse4.1
-EXEC = naive sub_matrix sse
+EXEC = naive sub_matrix sse sse_prefetch
 
 GIT_HOOKS := .git/hooks/pre-commit
 
@@ -16,6 +16,8 @@ sub_matrix: $(SRCS_common)
 	$(CC) $(CFLAGS) -D$@ -o $@ main.c
 sse: $(SRCS_common)
 	$(CC) $(CFLAGS) -D$@ -o $@ main.c
+sse_prefetch: $(SRCS_common)
+	$(CC) $(CFLAGS) -D$@ -o $@ main.c
 
 cache-test: $(EXEC)
 	echo 1 | sudo tee /proc/sys/vm/drop_caches && \
@@ -27,6 +29,10 @@ cache-test: $(EXEC)
 	echo 3 | sudo tee /proc/sys/vm/drop_caches && \
 		perf stat --repeat 2 -e cache-misses,cache-references,instructions,cycles \
 		./sse
+	echo 4 | sudo tee /proc/sys/vm/drop_caches && \
+		perf stat --repeat 2 -e cache-misses,cache-references,instructions,cycles \
+		./sse_prefetch
+
 clean:
 	$(RM) $(EXEC)
 

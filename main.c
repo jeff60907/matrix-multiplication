@@ -112,6 +112,13 @@ int main(int argc, char *argv[])
     printf("sse: \t\t %ld us\n", diff_in_us(start, end));
 #endif
 
+#if defined(sse_prefetch)
+    clock_gettime(CLOCK_REALTIME, &start);
+    sse_multiply_prefetch(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("sse_prefetch: \t\t %ld us\n", diff_in_us(start, end));
+#endif
+
     free(src1);
     free(src2);
     free(out1);
