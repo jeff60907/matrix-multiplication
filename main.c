@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <time.h>
-
+#include <x86intrin.h>
 #include "impl.c"
 
 #define MARTRIX1_H 1024
@@ -103,6 +103,13 @@ int main(int argc, char *argv[])
     sub_matrix_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
     clock_gettime(CLOCK_REALTIME, &end);
     printf("sub_matrix: \t\t %ld us\n", diff_in_us(start, end));
+#endif
+
+#if defined(sse)
+    clock_gettime(CLOCK_REALTIME, &start);
+    sse_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("sse: \t\t %ld us\n", diff_in_us(start, end));
 #endif
 
     free(src1);
