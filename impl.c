@@ -99,8 +99,9 @@ void sse_multiply(int *src1, int *src2, int *dst, int src1_w, int src1_h,
                 __m128i T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des0 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des0 = _mm_add_epi32(T20,des0);
 
                 T16 = _mm_unpacklo_epi32(T4, T5);
                 T17 = _mm_unpacklo_epi32(T6, T7);
@@ -113,8 +114,9 @@ void sse_multiply(int *src1, int *src2, int *dst, int src1_w, int src1_h,
                 T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des1 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des1 = _mm_add_epi32(T20,des1);
 
                 T16 = _mm_unpacklo_epi32(T8, T9);
                 T17 = _mm_unpacklo_epi32(T10, T11);
@@ -127,8 +129,9 @@ void sse_multiply(int *src1, int *src2, int *dst, int src1_w, int src1_h,
                 T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des2 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des2 = _mm_add_epi32(T20,des2);
 
                 T16 = _mm_unpacklo_epi32(T12, T13);
                 T17 = _mm_unpacklo_epi32(T14, T15);
@@ -141,8 +144,9 @@ void sse_multiply(int *src1, int *src2, int *dst, int src1_w, int src1_h,
                 T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des3 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des3 = _mm_add_epi32(T20,des3);
             }
             /* store to dst */
             _mm_storeu_si128((__m128i *)(dst + ((i + 0) * src2_w) + j), des0);
@@ -229,8 +233,9 @@ void sse_multiply_prefetch(int *src1, int *src2, int *dst, int src1_w, int src1_
                 __m128i T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des0 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des0 = _mm_add_epi32(T20,des0);
 
                 T16 = _mm_unpacklo_epi32(T4, T5);
                 T17 = _mm_unpacklo_epi32(T6, T7);
@@ -243,8 +248,9 @@ void sse_multiply_prefetch(int *src1, int *src2, int *dst, int src1_w, int src1_
                 T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des1 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des1 = _mm_add_epi32(T20,des1);
 
                 T16 = _mm_unpacklo_epi32(T8, T9);
                 T17 = _mm_unpacklo_epi32(T10, T11);
@@ -257,8 +263,9 @@ void sse_multiply_prefetch(int *src1, int *src2, int *dst, int src1_w, int src1_
                 T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des2 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des2 = _mm_add_epi32(T20,des2);
 
                 T16 = _mm_unpacklo_epi32(T12, T13);
                 T17 = _mm_unpacklo_epi32(T14, T15);
@@ -271,8 +278,9 @@ void sse_multiply_prefetch(int *src1, int *src2, int *dst, int src1_w, int src1_
                 T23 = _mm_unpackhi_epi64(T18, T19);
 
                 T20 = _mm_add_epi32(T20,T21);
-                T22 = _mm_add_epi32(T22,T23);
-                des3 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T22);
+                T20 = _mm_add_epi32(T20,T23);
+                des3 = _mm_add_epi32(T20,des3);
             }
             /* store to dst */
             _mm_storeu_si128((__m128i *)(dst + ((i + 0) * src2_w) + j), des0);
@@ -281,6 +289,12 @@ void sse_multiply_prefetch(int *src1, int *src2, int *dst, int src1_w, int src1_
             _mm_storeu_si128((__m128i *)(dst + ((i + 3) * src2_w) + j), des3);
         }
     }
+}
+
+void avx_multiply(int *src1, int *src2, int *dst, int src1_w, int src1_h,
+                  int src2_w, int src2_h)
+{
+
 }
 
 #endif
