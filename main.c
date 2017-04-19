@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
 #include <x86intrin.h>
 #include "impl.c"
 
@@ -132,6 +133,13 @@ int main(int argc, char *argv[])
     avx_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
     clock_gettime(CLOCK_REALTIME, &end);
     printf("avx: \t\t %ld us\n", diff_in_us(start, end));
+#endif
+
+#if defined(avx_prefetch)
+    clock_gettime(CLOCK_REALTIME, &start);
+    avx_multiply_prefetch(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("avx_prefetch: \t\t %ld us\n", diff_in_us(start, end));
 #endif
 
     free(src1);

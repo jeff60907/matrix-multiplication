@@ -1,5 +1,5 @@
 CFLAGS = -Wall -std=gnu99 -O0 -mavx
-EXEC = naive sub_matrix sse sse_prefetch avx
+EXEC = naive sub_matrix sse sse_prefetch avx avx_prefetch
 
 GIT_HOOKS := .git/hooks/pre-commit
 
@@ -20,6 +20,8 @@ sse_prefetch: $(SRCS_common)
 	$(CC) $(CFLAGS) -D$@ -o $@ main.c
 avx:  $(SRCS_common)
 	$(CC) $(CFLAGS) -D$@ -o $@ main.c
+avx_prefetch:  $(SRCS_common)
+	$(CC) $(CFLAGS) -D$@ -o $@ main.c
 cache-test: $(EXEC)
 	echo 1 | sudo tee /proc/sys/vm/drop_caches && \
 		perf stat --repeat 2 -e cache-misses,cache-references,instructions,cycles \
@@ -36,6 +38,9 @@ cache-test: $(EXEC)
 	echo 5 | sudo tee /proc/sys/vm/drop_caches && \
 		perf stat --repeat 2 -e cache-misses,cache-references,instructions,cycles \
 		./avx
+	echo 6 | sudo tee /proc/sys/vm/drop_caches && \
+		perf stat --repeat 2 -e cache-misses,cache-references,instructions,cycles \
+		./avx_prefetch
 
 clean:
 	$(RM) $(EXEC)
