@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     }
     printf("\n");
 
-    sse_multiply_prefetch(martrix_1, martrix_2, test_out, 8, 8, 8, 8);
+    avx_multiply(martrix_1, martrix_2, test_out, 8, 8, 8, 8);
 
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++)
@@ -125,6 +125,13 @@ int main(int argc, char *argv[])
     sse_multiply_prefetch(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
     clock_gettime(CLOCK_REALTIME, &end);
     printf("sse_prefetch: \t\t %ld us\n", diff_in_us(start, end));
+#endif
+
+#if defined(avx)
+    clock_gettime(CLOCK_REALTIME, &start);
+    avx_multiply(src1, src2, out1, MARTRIX1_W, MARTRIX1_H, MARTRIX2_W, MARTRIX2_H);
+    clock_gettime(CLOCK_REALTIME, &end);
+    printf("avx: \t\t %ld us\n", diff_in_us(start, end));
 #endif
 
     free(src1);

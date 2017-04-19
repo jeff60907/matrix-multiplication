@@ -294,7 +294,304 @@ void sse_multiply_prefetch(int *src1, int *src2, int *dst, int src1_w, int src1_
 void avx_multiply(int *src1, int *src2, int *dst, int src1_w, int src1_h,
                   int src2_w, int src2_h)
 {
+    for (int i = 0; i < src1_h; i += 8) {
+        for (int j = 0; j < src2_w; j += 8) {
+            __m256 des0, des1, des2, des3, des4, des5, des6, des7;
+            for (int k = 0; k < src2_h; k += 8) {
+                /* laod eight rows from src2 */
+                __m256 ymm0 = _mm256_loadu_ps((float *) (src2 + (k + 0) * src2_w + j));
+                __m256 ymm1 = _mm256_loadu_ps((float *) (src2 + (k + 1) * src2_w + j));
+                __m256 ymm2 = _mm256_loadu_ps((float *) (src2 + (k + 2) * src2_w + j));
+                __m256 ymm3 = _mm256_loadu_ps((float *) (src2 + (k + 3) * src2_w + j));
+                __m256 ymm4 = _mm256_loadu_ps((float *) (src2 + (k + 4) * src2_w + j));
+                __m256 ymm5 = _mm256_loadu_ps((float *) (src2 + (k + 5) * src2_w + j));
+                __m256 ymm6 = _mm256_loadu_ps((float *) (src2 + (k + 6) * src2_w + j));
+                __m256 ymm7 = _mm256_loadu_ps((float *) (src2 + (k + 7) * src2_w + j));
 
+                /* set each element from src1*/
+                __m256 ymm8 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 0]);
+                __m256 ymm9 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 1]);
+                __m256 ymm10 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 2]);
+                __m256 ymm11 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 3]);
+                __m256 ymm12 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 4]);
+                __m256 ymm13 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 5]);
+                __m256 ymm14 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 6]);
+                __m256 ymm15 = _mm256_set1_ps(src1[(i + 0) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des0 = _mm256_add_ps(des0, ymm8);
+                //------------------------------------------------------------------------------//
+                /* set each element from src1*/
+                ymm8 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 0]);
+                ymm9 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 1]);
+                ymm10 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 2]);
+                ymm11 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 3]);
+                ymm12 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 4]);
+                ymm13 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 5]);
+                ymm14 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 6]);
+                ymm15 = _mm256_set1_ps(src1[(i + 1) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des1 = _mm256_add_ps(des1, ymm8);
+                //------------------------------------------------------------------------------//
+                /* set each element from src1*/
+                ymm8 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 0]);
+                ymm9 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 1]);
+                ymm10 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 2]);
+                ymm11 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 3]);
+                ymm12 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 4]);
+                ymm13 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 5]);
+                ymm14 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 6]);
+                ymm15 = _mm256_set1_ps(src1[(i + 2) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des2 = _mm256_add_ps(des2, ymm8);
+                //------------------------------------------------------------------------------//
+                /* set each element from src1*/
+                ymm8 = _mm256_set1_ps(src1[(i + 3) * src1_w + k + 0]);
+                ymm9 = _mm256_set1_ps(src1[(i + 3) * src1_w + k + 1]);
+                ymm10 = _mm256_set1_ps(src1[(i + 3) * src1_w + k + 2]);
+                ymm11 = _mm256_set1_ps(src1[(i + 3 ) * src1_w + k + 3]);
+                ymm12 = _mm256_set1_ps(src1[(i + 3) * src1_w + k + 4]);
+                ymm13 = _mm256_set1_ps(src1[(i + 3) * src1_w + k + 5]);
+                ymm14 = _mm256_set1_ps(src1[(i + 3) * src1_w + k + 6]);
+                ymm15 = _mm256_set1_ps(src1[(i + 3) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des3 = _mm256_add_ps(des3, ymm8);
+                //------------------------------------------------------------------------------//
+                /* set each element from src1*/
+                ymm8 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 0]);
+                ymm9 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 1]);
+                ymm10 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 2]);
+                ymm11 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 3]);
+                ymm12 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 4]);
+                ymm13 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 5]);
+                ymm14 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 6]);
+                ymm15 = _mm256_set1_ps(src1[(i + 4) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des4 = _mm256_add_ps(des4, ymm8);
+                //------------------------------------------------------------------------------//
+                /* set each element from src1*/
+                ymm8 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 0]);
+                ymm9 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 1]);
+                ymm10 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 2]);
+                ymm11 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 3]);
+                ymm12 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 4]);
+                ymm13 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 5]);
+                ymm14 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 6]);
+                ymm15 = _mm256_set1_ps(src1[(i + 5) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des5 = _mm256_add_ps(des5, ymm8);
+                //------------------------------------------------------------------------------//
+                /* set each element from src1*/
+                ymm8 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 0]);
+                ymm9 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 1]);
+                ymm10 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 2]);
+                ymm11 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 3]);
+                ymm12 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 4]);
+                ymm13 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 5]);
+                ymm14 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 6]);
+                ymm15 = _mm256_set1_ps(src1[(i + 6) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des6 = _mm256_add_ps(des6, ymm8);
+                //------------------------------------------------------------------------------//
+                /* set each element from src1*/
+                ymm8 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 0]);
+                ymm9 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 1]);
+                ymm10 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 2]);
+                ymm11 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 3]);
+                ymm12 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 4]);
+                ymm13 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 5]);
+                ymm14 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 6]);
+                ymm15 = _mm256_set1_ps(src1[(i + 7) * src1_w + k + 7]);
+
+                /* vector multiply */
+                /* row 1 2 */
+                ymm8 = _mm256_mul_ps(ymm8, ymm0);
+                ymm9 = _mm256_mul_ps(ymm9, ymm1);
+                ymm8 = _mm256_add_ps(ymm8, ymm9);
+                /* row 3 4 */
+                ymm10 = _mm256_mul_ps(ymm10, ymm2);
+                ymm11 = _mm256_mul_ps(ymm11, ymm3);
+                ymm10 = _mm256_add_ps(ymm10, ymm11);
+                /* row 5 6 */
+                ymm12 = _mm256_mul_ps(ymm12, ymm4);
+                ymm13 = _mm256_mul_ps(ymm13, ymm5);
+                ymm12 = _mm256_add_ps(ymm12, ymm13);
+                /* row 7 8 */
+                ymm14 = _mm256_mul_ps(ymm14, ymm6);
+                ymm15 = _mm256_mul_ps(ymm15, ymm7);
+                ymm14 = _mm256_add_ps(ymm14, ymm15);
+                /* sum */
+                ymm8 = _mm256_add_ps(ymm8, ymm10);
+                ymm12 = _mm256_add_ps(ymm12, ymm14);
+                ymm8 = _mm256_add_ps(ymm8, ymm12);
+
+                des7 = _mm256_add_ps(des7, ymm8);
+
+            }
+            /* store dst */
+            _mm256_storeu_ps((float *) (dst + (i + 0) * src2_w + j), des0);
+            _mm256_storeu_ps((float *) (dst + (i + 1) * src2_w + j), des1);
+            _mm256_storeu_ps((float *) (dst + (i + 2) * src2_w + j), des2);
+            _mm256_storeu_ps((float *) (dst + (i + 3) * src2_w + j), des3);
+            _mm256_storeu_ps((float *) (dst + (i + 4) * src2_w + j), des4);
+            _mm256_storeu_ps((float *) (dst + (i + 5) * src2_w + j), des5);
+            _mm256_storeu_ps((float *) (dst + (i + 6) * src2_w + j), des6);
+            _mm256_storeu_ps((float *) (dst + (i + 7) * src2_w + j), des7);
+        }
+    }
 }
 
 #endif
